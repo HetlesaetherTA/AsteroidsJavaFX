@@ -7,36 +7,37 @@ public class Player extends Entities {
     private boolean rotateLeft;
     private boolean rotateRight;
     private boolean thrust;
+    private double maxSpeed;
 
-    public Player(Scene scene) {
-        super();
+    public Player(double maxSpeed) {
+        super(maxSpeed);
         this.sprite = new Path();
 
         ((Path) this.sprite).getElements().addAll(
-                new MoveTo( // top point
-                        scene.getWidth() / 2,
-                        scene.getHeight() / 2 - 25
+                new MoveTo( // Top point (centered at 0, 0)
+                        0,
+                        -25
                 ),
-                new QuadCurveTo( // bottom-left
-                        scene.getWidth() / 2 - 10, scene.getHeight() / 2, // Control point
-                        scene.getWidth() / 2 - 20, scene.getHeight() / 2 + 25 // Bottom-left point
+                new QuadCurveTo( // Bottom-left
+                        -10, 0, // Control point
+                        -20, 25 // Bottom-left point
                 ),
-
-                new LineTo( // Line to bottom-middle
-                        scene.getWidth() / 2,
-                        scene.getHeight() / 2 + 10 // Bottom-middle point
+                new LineTo( // Bottom-middle
+                        0,
+                        10
                 ),
-                new LineTo( //  bottom-right
-                        scene.getWidth() / 2 + 20,
-                        scene.getHeight() / 2 + 25 // Bottom-right point
+                new LineTo( // Bottom-right
+                        20,
+                        25
                 ),
                 new QuadCurveTo( // Curve to top
-                        scene.getWidth() / 2 + 10, scene.getHeight() / 2, // Control point
-                        scene.getWidth() / 2, scene.getHeight() / 2 - 25 // Back to top point
+                        10, 0, // Control point
+                        0, -25 // Back to top point
                 ),
                 new ClosePath() // Close shape
         );
     }
+
     public void startThrust() {
         this.thrust = true;
     }
@@ -70,4 +71,7 @@ public class Player extends Entities {
     public Boolean isRotateRight() {
         return rotateRight;
     };
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
 }
