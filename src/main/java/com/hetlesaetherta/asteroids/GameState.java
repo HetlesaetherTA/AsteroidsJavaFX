@@ -56,7 +56,7 @@ public class GameState {
         double[] velocityVector = player.getVelocity();
 
         if (player.isThrust()) {
-            player.addVelocity(0.2, player.sprite.getRotate()); // param is acceleration speed
+            player.addVelocity(0.3, player.sprite.getRotate()); // param is acceleration speed
         }
 
         if (this.player.isRotateLeft()) {
@@ -67,6 +67,7 @@ public class GameState {
             sprite.setRotate(sprite.getRotate() + 5);
         }
 
+        applyFriction(player);
         sprite.setLayoutX(sprite.getLayoutX() + velocityVector[0]);
         sprite.setLayoutY(sprite.getLayoutY() + velocityVector[1]);
     }
@@ -84,5 +85,9 @@ public class GameState {
         if (gameObject.sprite.getLayoutY() < 0) {
             gameObject.sprite.setLayoutY(GameState.this.scene.getHeight());
         }
+    }
+
+    private void applyFriction(Entities gameObject) {
+        gameObject.subtractVelocity(0.05);
     }
 }
