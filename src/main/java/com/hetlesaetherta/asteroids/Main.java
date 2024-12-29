@@ -4,24 +4,20 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import javafx.scene.paint.Color;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        Scene scene = new Scene(new Group(), 800,800);
 
-        Group root = new Group();
-        Scene scene = new Scene(root, 800,800);
-        Player player = new Player(7); // param is max movement speed
+        scene.setFill(Color.web("#2d2d2d"));
 
-        InputHandler inputHandler = new InputHandler();
-        inputHandler.handler(scene, player);
-
-        GameState gameState = new GameState(scene, player);
+        GameState gameState = new GameState(scene);
         gameState.start();
-        root.getChildren().add(player.sprite);
+
         stage.setScene(scene);
         stage.show();
-    }
+    };
 
     public static void main(String[] args) {
         Application.launch();

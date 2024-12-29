@@ -1,15 +1,24 @@
 package com.hetlesaetherta.asteroids;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 
-public class Entities {
-    private double[] velocityVector = {0,0};
+abstract class Entities {
+    private double[] velocityVector = new double[2];
+    private double[] positionVector = new double[2];
+    private double angleDegrees;
+
     private double maxSpeed;
     protected Node sprite;
 
-    public Entities(double maxSpeed) {
+    public Entities(double x, double y, double angleDegrees, double maxSpeed) {
+        this.positionVector[0] = x;
+        this.positionVector[1] = y;
+        this.angleDegrees = angleDegrees;
         this.maxSpeed = maxSpeed;
+    }
+
+    public void update() {
+
     }
 
     public void addVelocity(double increment, double angleDegrees) {
@@ -27,24 +36,6 @@ public class Entities {
         }
     }
 
-    public void subtractVelocity(double friction) {
-        double speed = Math.sqrt(Math.pow(velocityVector[0], 2) + Math.pow(velocityVector[1], 2));
-
-        if (speed > 0.0001) { // Avoid division by zero or unnecessary calculations
-            // Calculate the friction decrement, clamping to avoid negative magnitudes
-            double decrement = Math.min(friction, speed);
-
-            // Scale the velocity components proportionally
-            velocityVector[0] -= (velocityVector[0] / speed) * decrement;
-            velocityVector[1] -= (velocityVector[1] / speed) * decrement;
-
-            // If the velocity magnitude is reduced to nearly zero, set to zero
-            if (speed - decrement < 0.0001) {
-                velocityVector[0] = 0;
-                velocityVector[1] = 0;
-            }
-        }
-    }
 
     public void setVelocity(double x, double y) {
         velocityVector[0] = x;
@@ -53,5 +44,26 @@ public class Entities {
 
     public double[] getVelocity() {
         return velocityVector;
+    }
+
+    public void setAngleDegrees(double angleDegrees) {
+        this.angleDegrees = angleDegrees;
+    }
+
+    public double getAngleDegrees() {
+        return angleDegrees;
+    }
+
+    public void setPosition(double x, double y) {
+        positionVector[0] = x;
+        positionVector[1] = y;
+    }
+
+    public double[] getPosition() {
+        return positionVector;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
     }
 }

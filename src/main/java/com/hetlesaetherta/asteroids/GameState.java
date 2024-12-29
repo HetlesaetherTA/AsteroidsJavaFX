@@ -1,18 +1,55 @@
 package com.hetlesaetherta.asteroids;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Polygon;
+import java.util.ArrayList;
 
 public class GameState {
-    private final Player player;
+    private Player player;
+    private ArrayList<Entities> entities = new ArrayList<>();
     private final Scene scene;
-    public GameState(Scene scene, Player player) {
-        this.player = player;
+
+    public GameState(Scene scene) {
         this.scene = scene;
+        initiate();
     }
 
+    private void initiate() {
+        this.player = new Player(
+                scene.getWidth() / 2,
+                scene.getHeight() / 2,
+                0,
+                8);
+
+        entities.add(this.player);
+
+        double[] pos = player.getPosition();
+
+        Group root = new Group();
+        root.getChildren().add(player.sprite);
+        scene.setRoot(root);
+
+        InputHandler inputHandler = new InputHandler();
+        inputHandler.handler(scene, player);
+    }
+
+    public void start() {
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                for (Entities entity : entities) {
+                    entity.update();
+                    wrapAroundLogic(entity);
+                    updateSprite(entity);
+                }
+              calculateFPS(now);
+              System.out.println("FPS: " + fps);
+            }
+        };
+        animationTimer.start();
+    }
+    // fps counter
     private double fps = 0;
     private int frameCounter = 0;
     private double timeSinceLastSecond = 0;
@@ -37,57 +74,34 @@ public class GameState {
         this.lastTimeStamp = time;
     }
 
-
-    public void start() {
-        AnimationTimer animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                updatePlayerPosition();
-                wrapAroundLogic(GameState.this.player);
-                calculateFPS(now);
-                System.out.println("FPS: " + fps);
-            }
-        };
-        animationTimer.start();
+    private void updateSprite(Entities entity) {
+        double[] position = entity.getPosition();
+        entity.sprite.setRotate(entity.getAngleDegrees());
+        entity.sprite.setTranslateX(position[0]);
+        entity.sprite.setTranslateY(position[1]);
     }
-
-    private void updatePlayerPosition() {
-        Path sprite = (Path) this.player.sprite;
-        double[] velocityVector = player.getVelocity();
-
-        if (player.isThrust()) {
-            player.addVelocity(0.3, player.sprite.getRotate()); // param is acceleration speed
+    private void wrapAroundLogic(Entities entity) {
+        double[] positionVector = entity.getPosition();
+        if (positionVector[0] > GameState.this.scene.getWidth()) {
+            entity.setPosition(
+                    positionVector[0] - GameState.this.scene.getWidth(),
+                    positionVector[1]);
         }
 
-        if (this.player.isRotateLeft()) {
-            sprite.setRotate(sprite.getRotate() - 5);
+        if (positionVector[1] > GameState.this.scene.getHeight()) {
+            entity.setPosition(
+                    positionVector[0],
+                    positionVector[1] - GameState.this.scene.getHeight());
         }
-
-        if (this.player.isRotateRight()) {
-            sprite.setRotate(sprite.getRotate() + 5);
+        if (positionVector[0] < 0) {
+            entity.setPosition(
+                    positionVector[0] + GameState.this.scene.getWidth(),
+                    positionVector[1]);
         }
-
-        applyFriction(player);
-        sprite.setLayoutX(sprite.getLayoutX() + velocityVector[0]);
-        sprite.setLayoutY(sprite.getLayoutY() + velocityVector[1]);
-    }
-    private void wrapAroundLogic(Entities gameObject) {
-        if (gameObject.sprite.getLayoutX() > GameState.this.scene.getWidth()) {
-            gameObject.sprite.setLayoutX(0);
+        if (positionVector[1] < 0) {
+            entity.setPosition(
+                    positionVector[0],
+                    positionVector[1] + GameState.this.scene.getHeight());
         }
-
-        if (gameObject.sprite.getLayoutY() > GameState.this.scene.getHeight()) {
-            gameObject.sprite.setLayoutY(0);
-        }
-        if (gameObject.sprite.getLayoutX() < 0) {
-            gameObject.sprite.setLayoutX(GameState.this.scene.getWidth());
-        }
-        if (gameObject.sprite.getLayoutY() < 0) {
-            gameObject.sprite.setLayoutY(GameState.this.scene.getHeight());
-        }
-    }
-
-    private void applyFriction(Entities gameObject) {
-        gameObject.subtractVelocity(0.05);
     }
 }
