@@ -47,9 +47,10 @@ public class GameState {
                     entity.update();
                     wrapAroundLogic(entity);
                     updateSprite(entity);
+                    entity.checkCollision(entities);
                 }
-                calculateFPS(now);
-                System.out.println("FPS: " + getFPS());
+//                calculateFPS(now);
+//                System.out.println("FPS: " + getFPS());
             }
         };
         animationTimer.start();

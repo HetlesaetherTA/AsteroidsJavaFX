@@ -3,7 +3,9 @@ package com.hetlesaetherta.asteroids;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
-abstract class Entities {
+import java.util.ArrayList;
+
+public abstract class Entities {
     private double[] velocityVector = new double[2];
     private double[] positionVector = new double[2];
     private double angleDegrees;
@@ -20,6 +22,10 @@ abstract class Entities {
 
     public void update() {
 
+    }
+
+    public Entities checkCollision(ArrayList<Entities> entities) {
+        return null;
     }
 
     public double[] generateLegalSpawnPoint(Player player, Scene scene) {
@@ -44,6 +50,8 @@ abstract class Entities {
 
         return new double[]{x, y};
     }
+
+
     private double calculateDistance(Player player, Scene scene, double x2, double y2) {
         double[] playerPosition = player.getPosition();
         double x1 = playerPosition[0];
@@ -76,15 +84,6 @@ abstract class Entities {
         }
 
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-
-    public double calculateDistance(double x2, double y2) {
-        double x1 = this.positionVector[0];
-        double y1 = this.positionVector[1];
-
-
-
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)); // euclidean distance formula
     }
 
     public void addVelocity(double increment, double angleDegrees) {

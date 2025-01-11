@@ -1,13 +1,21 @@
 package com.hetlesaetherta.asteroids;
 
+import com.hetlesaetherta.asteroids.Entities;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+
+import java.util.ArrayList;
 
 public class Player extends Entities {
     private boolean rotateLeft;
     private boolean rotateRight;
     private boolean thrust;
+
+    private double[] initialPosition = new double[2];
+
+    private int health;
 
     @Override
     public void update() {
@@ -32,8 +40,54 @@ public class Player extends Entities {
         );
     }
 
+    @Override
+    public Entities checkCollision(ArrayList<Entities> entities) {
+        for (Entities entity : entities) {
+            if (entity == this) {
+                continue;
+            }
+
+            if (sprite.getBoundsInParent().intersects(entity.sprite.getBoundsInParent())) {
+                takeDamage();
+                System.out.println(getHealth());
+                return entity;
+            }
+        };
+        return null;
+    }
+
+    private void takeDamage() {
+        decrementHealth();
+        reset();
+    }
+
+    private void decrementHealth() {
+        this.health -= 1;
+    }
+
+    public int getHealth() {
+        return this.health;
+    }
+
+    private void reset() {
+        setPosition(getInitialPosition()[0], getInitialPosition()[1]);
+        setVelocity(0,0);
+        setAngleDegrees(0);
+    }
+
+    private void setInitialPosition(double x, double y) {
+        initialPosition[0] = x;
+        initialPosition[1] = y;
+    }
+
+    private double[] getInitialPosition() {
+        return initialPosition;
+    }
+
     public Player(double x, double y, double angleDegrees, double maxSpeed) {
         super(x, y, angleDegrees, maxSpeed);
+        setInitialPosition(x,y);
+
         this.sprite = new Path();
 
         ((Path) this.sprite).getElements().addAll(
